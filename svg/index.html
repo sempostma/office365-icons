@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+    <a></a>
+
+    <div class="container">
+        <br>
+        <input class="form-control" type="file" multiple accept="image/svg"><br>
+        <input placeholder="Width in pixels (optional)" class="form-control" type="number" min="0" step="0" name="width"><br>
+        <input placeholder="Height in pixels (optional)" class="form-control" type="number" min="0" step="0" name="height"><br><br>
+        <button class="btn btn-primary">Convert to png</button>
+    </div>
+
+    <script>
+        document.querySelector('button').onclick = e => {
+            var files = Array.from(document.querySelector('input[type="file"]').files);
+            var a = document.querySelector('a');
+            var width = document.querySelector('input[name="width"]').value;
+            var height = document.querySelector('input[name="height"]').value;
+            files.forEach(file => {
+                var fileUrl = window.URL.createObjectURL(file);
+                var img = document.body.appendChild(document.createElement('img'));
+                if (width) img.width = width;
+                img.onload = () => {
+                    window.URL.revokeObjectURL(fileUrl);
+                    const c = document.createElement('canvas');
+                    c.width = img.width;
+                    c.height = img.height;
+                    const ctx = c.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    c.toBlob(blob => {
+                        var url = window.URL.createObjectURL(blob);
+                        a.href = url;
+                        a.download = file.name.replace('.svg', '.png');
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    }, 'image/png');
+
+                };
+                img.src = fileUrl;
+            })
+        }
+
+    </script>
+</body>
+
+</html>
